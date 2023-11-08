@@ -19,7 +19,36 @@ const useStyles = createUseStyles({
 // Can be used to set initial schemas and mods (useful for development)
 const initialJsonSchema = {};
 const initialUiSchema = {};
-const mods = {};
+const mods = {
+  customFormInputs:{
+    'doublePoney': {
+      displayName: "Double Poney",
+      matchIf: [
+        {
+          types: [
+            'object'
+          ],
+          field: 'doublePoney',
+        },
+      ],
+      defaultDataSchema: {
+        type: "object",
+        properties: {
+          text_a: {
+            type: "string",
+          },
+          text_b: {
+            type: "string",
+          },
+        },
+      },
+      defaultUiSchema: {
+        "ui:field": 'doublePoney',
+      },
+      type: 'object',
+    }
+  }
+};
 
 export default function PlaygroundContainer({ title }: { title: string }) {
   const [schema, setSchema] = React.useState(JSON.stringify(initialJsonSchema));

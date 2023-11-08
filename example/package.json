@@ -1,5 +1,5 @@
 {
-  "name": "@ginkgo-bioworks/react-json-schema-form-builder-example",
+  "name": "@big-wolves/react-json-schema-form-builder-example",
   "homepage": ".",
   "version": "0.0.0",
   "private": true,
@@ -15,7 +15,7 @@
     "clean": "rimraf node_modules build"
   },
   "dependencies": {
-    "@ginkgo-bioworks/react-json-schema-form-builder": "file:..",
+    "@big-wolves/react-json-schema-form-builder": "file:..",
     "@rjsf/bootstrap-4": "^3.2.1",
     "@rjsf/core": "^3.0.0",
     "react-bootstrap": "^1.6.4",

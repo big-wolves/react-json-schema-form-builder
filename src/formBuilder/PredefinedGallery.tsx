@@ -196,6 +196,7 @@ export default function PredefinedGallery({
             (newSchema, newUiSchema) =>
               onChange(stringify(newSchema), stringify(newUiSchema)),
             categoryHash,
+            mods?.customFormInputs || {},
           );
         }}
         mods={mods}

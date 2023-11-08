@@ -15,6 +15,7 @@ import {
   DefinitionData,
   InputSelectDataType,
 } from './types';
+import { knownObject } from './utilHack';
 
 // parse in either YAML or JSON
 export function parse(text: string): any {
@@ -391,6 +392,7 @@ function generateDependencyElement(
   uiProperties: any,
   requiredNames: any,
   categoryHash: { [key: string]: string },
+  customFormInputs: { [key: string]: any },
   definitionData?: DefinitionData,
   definitionUi?: { [key: string]: any },
   useDefinitionDetails = true, // determines whether to use an element's definition details or not.
@@ -432,7 +434,17 @@ function generateDependencyElement(
   newElement.$ref =
     typeof elementDetails.$ref === 'string' ? elementDetails.$ref : undefined;
 
-  if (elementDetails.type && elementDetails.type === 'object') {
+  const isKnownObject = knownObject(
+    elementDetails.type,
+    uiProps,
+    customFormInputs,
+  );
+
+  if (
+    elementDetails.type &&
+    elementDetails.type === 'object' &&
+    !isKnownObject
+  ) {
     // create a section
     newElement.schema = elementDetails;
     newElement.uischema = uiProps || {};
@@ -463,12 +475,19 @@ function generateDependencyElement(
 export function generateElementPropsFromSchemas(parameters: {
   schema: { [key: string]: any };
   uischema: { [key: string]: any };
+  customFormInputs: { [key: string]: FormInput };
   definitionData?: DefinitionData;
   definitionUi?: { [key: string]: any };
   categoryHash: { [key: string]: string };
 }): ElementProps[] {
-  const { schema, uischema, definitionData, definitionUi, categoryHash } =
-    parameters;
+  const {
+    schema,
+    uischema,
+    definitionData,
+    customFormInputs,
+    definitionUi,
+    categoryHash,
+  } = parameters;
 
   if (!schema.properties) return [];
 
@@ -515,7 +534,15 @@ export function generateElementPropsFromSchemas(parameters: {
     newElement.$ref = elementDetails.$ref;
     newElement.dataOptions = elementDetails;
 
-    if (elementDetails.type && elementDetails.type === 'object') {
+    const isObject = elementDetails.type && elementDetails.type === 'object';
+
+    const isKnownObject = knownObject(
+      elementDetails.type,
+      uischema[parameter],
+      customFormInputs,
+    );
+
+    if (isObject && !isKnownObject) {
       // create a section
       newElement.schema = elementDetails;
       newElement.uischema = uischema[parameter] || {};
@@ -572,6 +599,7 @@ export function generateElementPropsFromSchemas(parameters: {
                   uischema[parameter],
                   requiredNames,
                   categoryHash,
+                  customFormInputs,
                   definitionData,
                   definitionUi,
                   useDefinitionDetails,
@@ -606,6 +634,7 @@ export function generateElementPropsFromSchemas(parameters: {
             uischema[parameter],
             requiredNames,
             categoryHash,
+            customFormInputs,
             definitionData,
             definitionUi,
             useDefinitionDetails,
@@ -993,6 +1022,7 @@ export function addCardObj(parameters: AddFormObjectParametersType) {
     definitionData,
     definitionUi,
     categoryHash,
+    customFormInputs: mods?.customFormInputs || {},
   });
 
   const i = getIdFromElementsBlock(newElementObjArr);
@@ -1029,6 +1059,7 @@ export function addSectionObj(parameters: AddFormObjectParametersType) {
     schema,
     uischema,
     onChange,
+    mods,
     definitionData,
     definitionUi,
     index,
@@ -1040,6 +1071,7 @@ export function addSectionObj(parameters: AddFormObjectParametersType) {
     definitionData,
     definitionUi,
     categoryHash,
+    customFormInputs: mods?.customFormInputs || {},
   });
 
   const i = getIdFromElementsBlock(newElementObjArr);
@@ -1120,6 +1152,7 @@ export function generateElementComponentsFromSchemas(parameters: {
     definitionData,
     definitionUi,
     categoryHash,
+    customFormInputs: mods?.customFormInputs || {},
   });
 
   const elementList = elementPropArr.map((elementProp, index) => {
@@ -1181,6 +1214,7 @@ export function generateElementComponentsFromSchemas(parameters: {
               definitionData,
               definitionUi,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             });
 
             // extract uiOptions and other properties
@@ -1240,6 +1274,7 @@ export function generateElementComponentsFromSchemas(parameters: {
               definitionData,
               definitionUi,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             });
             newElementObjArr.splice(index, 1);
             setCardOpenArray([
@@ -1261,6 +1296,7 @@ export function generateElementComponentsFromSchemas(parameters: {
               definitionData,
               definitionUi,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             });
             if (index === 0) return;
 
@@ -1282,6 +1318,7 @@ export function generateElementComponentsFromSchemas(parameters: {
               definitionData,
               definitionUi,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             });
             if (index === elementPropArr.length - 1) return;
 
@@ -1344,6 +1381,7 @@ export function generateElementComponentsFromSchemas(parameters: {
               definitionData,
               definitionUi,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             });
 
             const oldSection = newElementObjArr[index];
@@ -1378,6 +1416,7 @@ export function generateElementComponentsFromSchemas(parameters: {
               definitionData,
               definitionUi,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             });
             newElementObjArr[index] = {
               ...oldSection,
@@ -1400,6 +1439,7 @@ export function generateElementComponentsFromSchemas(parameters: {
               definitionData,
               definitionUi,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             });
             newElementObjArr[index] = {
               ...oldSection,
@@ -1427,6 +1467,7 @@ export function generateElementComponentsFromSchemas(parameters: {
               definitionData,
               definitionUi,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             });
             newElementObjArr[index] = {
               ...oldSection,
@@ -1448,6 +1489,7 @@ export function generateElementComponentsFromSchemas(parameters: {
               definitionData,
               definitionUi,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             });
             newElementObjArr.splice(index, 1);
             setCardOpenArray([
@@ -1469,6 +1511,7 @@ export function generateElementComponentsFromSchemas(parameters: {
               definitionData,
               definitionUi,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             });
             if (index === 0) return;
 
@@ -1490,6 +1533,7 @@ export function generateElementComponentsFromSchemas(parameters: {
               definitionData,
               definitionUi,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             });
             if (index === elementPropArr.length - 1) return;
 
@@ -1555,6 +1599,7 @@ export function onDragEnd(
     definitionData?: { [key: string]: any };
     definitionUi?: { [key: string]: any };
     categoryHash: { [key: string]: string };
+    customFormInputs: { [key: string]: FormInput };
   },
 ) {
   const {
@@ -1564,6 +1609,7 @@ export function onDragEnd(
     definitionData,
     definitionUi,
     categoryHash,
+    customFormInputs,
   } = details;
   const src = result.source.index;
   const dest = result.destination.index;
@@ -1573,6 +1619,7 @@ export function onDragEnd(
     definitionData,
     definitionUi,
     categoryHash,
+    customFormInputs,
   });
 
   const tempBlock = newElementObjArr[src];
@@ -1594,6 +1641,7 @@ function propagateElementChange(
   definitionData: { [key: string]: any },
   definitionUi: { [key: string]: any },
   categoryHash: { [key: string]: string },
+  customFormInputs: { [key: string]: FormInput },
 ) {
   const updatedElementArr: ElementProps[] = [];
   elementArr.forEach((element) => {
@@ -1605,12 +1653,14 @@ function propagateElementChange(
         definitionData,
         definitionUi,
         categoryHash,
+        customFormInputs,
       });
       const updatedChildren = propagateElementChange(
         childrenElements,
         definitionData,
         definitionUi,
         categoryHash,
+        customFormInputs,
       );
       const newUiSchema = Object.assign(
         { ...element.uischema },
@@ -1642,6 +1692,7 @@ export function propagateDefinitionChanges(
     uischema: { [key: string]: any },
   ) => void,
   categoryHash: { [key: string]: string },
+  customFormInputs: { [key: string]: FormInput },
 ) {
   const definitionData = schema.definitions;
   const definitionUi = uischema.definitions;
@@ -1651,12 +1702,14 @@ export function propagateDefinitionChanges(
     definitionData,
     definitionUi,
     categoryHash,
+    customFormInputs,
   });
   const updatedBodyElements = propagateElementChange(
     bodyElements,
     definitionData,
     definitionUi,
     categoryHash,
+    customFormInputs,
   );
 
   updateSchemas(updatedBodyElements, {

@@ -330,6 +330,7 @@ export default function FormBuilder({
               definitionData: schemaData.definitions,
               definitionUi: uiSchemaData.definitions,
               categoryHash,
+              customFormInputs: mods?.customFormInputs || {},
             })
           }
         >

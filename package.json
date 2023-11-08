@@ -1,6 +1,6 @@
 {
-  "name": "@ginkgo-bioworks/react-json-schema-form-builder",
-  "version": "3.0.0",
+  "name": "@big-wolves/react-json-schema-form-builder",
+  "version": "3.1.0",
   "description": "React Component for visually configuring a JSON Schema-based form",
   "author": {
     "name": "Nathan Alam",
@@ -98,7 +98,7 @@
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/ginkgobioworks/react-json-schema-form-builder/issues",
-    "email": "devs@ginkgobioworks.com"
+    "url": "https://github.com/big-wolves/react-json-schema-form-builder/issues",
+    "email": "dev@big-wolves.com"
   }
 }

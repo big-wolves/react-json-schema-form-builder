@@ -357,6 +357,7 @@ export default function Section({
                   definitionData,
                   definitionUi,
                   categoryHash,
+                  customFormInputs: mods?.customFormInputs || {},
                 })
               }
             >

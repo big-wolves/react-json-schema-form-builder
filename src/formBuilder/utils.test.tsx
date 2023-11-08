@@ -381,6 +381,7 @@ describe('generateElementPropsFromSchemas', () => {
       schema,
       uischema,
       categoryHash: generateCategoryHash(DEFAULT_FORM_INPUTS),
+      customFormInputs: {},
     });
     expect(cardObjArr).toHaveLength(3);
 
@@ -438,6 +439,7 @@ describe('generateElementPropsFromSchemas', () => {
       schema: dependencySchema,
       uischema: dependencyUiSchema,
       categoryHash: generateCategoryHash(DEFAULT_FORM_INPUTS),
+      customFormInputs: {},
     });
     expect(cardObjArr).toHaveLength(2);
 
